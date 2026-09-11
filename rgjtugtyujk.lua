@@ -120,6 +120,33 @@ local function ShowNotification(title, text, iconColor)
     nStroke.Transparency = 0.4
     nStroke.Parent = notif
 
+    local nGradient = Instance.new("UIGradient")
+    nGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 38, 50)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(22, 22, 28)),
+    })
+    nGradient.Rotation = 45
+    nGradient.Parent = notif
+
+    local sideBar = Instance.new("Frame")
+    sideBar.Size = UDim2.new(0, 4, 1, -20)
+    sideBar.Position = UDim2.new(0, 8, 0, 10)
+    sideBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    sideBar.BorderSizePixel = 0
+    sideBar.Parent = notif
+
+    local sbCorner = Instance.new("UICorner")
+    sbCorner.CornerRadius = UDim.new(1, 0)
+    sbCorner.Parent = sideBar
+
+    local sbGradient = Instance.new("UIGradient")
+    sbGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, iconColor or Color3.fromRGB(90, 130, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 90, 255)),
+    })
+    sbGradient.Rotation = 90
+    sbGradient.Parent = sideBar
+
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Size = UDim2.new(1, -70, 0, 20)
     titleLabel.Position = UDim2.new(0, 60, 0, 12)
@@ -256,6 +283,108 @@ task.spawn(function()
     end
 end)
 
+local ProfileFrame = Instance.new("Frame")
+ProfileFrame.Name = "Profile"
+ProfileFrame.Size = UDim2.new(1, -20, 0, 40)
+ProfileFrame.Position = UDim2.new(0, 10, 0, 38)
+ProfileFrame.BackgroundTransparency = 1
+ProfileFrame.Parent = Sidebar
+
+local AvatarFrame = Instance.new("Frame")
+AvatarFrame.Size = UDim2.new(0, 35, 0, 35)
+AvatarFrame.Position = UDim2.new(0, 0, 0.5, -17.5)
+AvatarFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+AvatarFrame.BorderSizePixel = 0
+AvatarFrame.Parent = ProfileFrame
+
+local AvatarCorner = Instance.new("UICorner")
+AvatarCorner.CornerRadius = UDim.new(1, 0)
+AvatarCorner.Parent = AvatarFrame
+
+local AvatarStroke = Instance.new("UIStroke")
+AvatarStroke.Color = Colors.AccentBlue
+AvatarStroke.Thickness = 2
+AvatarStroke.Parent = AvatarFrame
+
+local AvatarImage = Instance.new("ImageLabel")
+AvatarImage.Name = "Avatar"
+AvatarImage.Size = UDim2.new(1, -4, 1, -4)
+AvatarImage.Position = UDim2.new(0, 2, 0, 2)
+AvatarImage.BackgroundTransparency = 1
+AvatarImage.Image = ""
+AvatarImage.Parent = AvatarFrame
+
+local AvatarImageCorner = Instance.new("UICorner")
+AvatarImageCorner.CornerRadius = UDim.new(1, 0)
+AvatarImageCorner.Parent = AvatarImage
+
+task.spawn(function()
+    local ok, thumb = pcall(function()
+        return Players:GetUserThumbnailAsync(LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+    end)
+    if ok and thumb then AvatarImage.Image = thumb end
+end)
+
+local ProfileName = Instance.new("TextLabel")
+ProfileName.Size = UDim2.new(1, -80, 1, 0)
+ProfileName.Position = UDim2.new(0, 45, 0, 0)
+ProfileName.BackgroundTransparency = 1
+ProfileName.Text = LocalPlayer.DisplayName or LocalPlayer.Name
+ProfileName.TextColor3 = Colors.Text
+ProfileName.Font = Enum.Font.GothamBold
+ProfileName.TextSize = 13
+ProfileName.TextXAlignment = Enum.TextXAlignment.Left
+ProfileName.TextTruncate = Enum.TextTruncate.AtEnd
+ProfileName.Parent = ProfileFrame
+
+local BadgeFrame = Instance.new("Frame")
+BadgeFrame.Size = UDim2.new(0, 55, 0, 18)
+BadgeFrame.Position = UDim2.new(1, -60, 0.5, -9)
+BadgeFrame.BorderSizePixel = 0
+BadgeFrame.Parent = ProfileFrame
+
+local BadgeCorner = Instance.new("UICorner")
+BadgeCorner.CornerRadius = UDim.new(0, 4)
+BadgeCorner.Parent = BadgeFrame
+
+local BadgeGradient = Instance.new("UIGradient")
+if IS_ADMIN then
+    BadgeFrame.BackgroundColor3 = Color3.fromRGB(220, 60, 60)
+    BadgeGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 80, 80)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 180, 60)),
+    })
+elseif IS_PREMIUM then
+    BadgeFrame.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+    BadgeGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 215, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 100, 255)),
+    })
+else
+    BadgeFrame.BackgroundColor3 = Color3.fromRGB(70, 130, 240)
+    BadgeGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 130, 240)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 90, 255)),
+    })
+end
+BadgeGradient.Rotation = 0
+BadgeGradient.Parent = BadgeFrame
+
+local BadgeText = Instance.new("TextLabel")
+BadgeText.Size = UDim2.new(1, 0, 1, 0)
+BadgeText.BackgroundTransparency = 1
+if IS_ADMIN then
+    BadgeText.Text = "DEV"
+elseif IS_PREMIUM then
+    BadgeText.Text = "PREMIUM"
+else
+    BadgeText.Text = "USER"
+end
+BadgeText.TextColor3 = Color3.fromRGB(255, 255, 255)
+BadgeText.Font = Enum.Font.GothamBlack
+BadgeText.TextSize = 9
+BadgeText.Parent = BadgeFrame
+
 local CategoryContainer = Instance.new("Frame")
 CategoryContainer.Name = "CategoryContainer"
 CategoryContainer.Size = UDim2.new(1, -20, 1, -190)
@@ -354,12 +483,235 @@ CardsGrid:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     CardsScroll.CanvasSize = UDim2.new(0, 0, 0, CardsGrid.AbsoluteContentSize.Y + 10)
 end)
 
--- ============================================================
--- ФУНКЦИИ (Fly, NoClip, LockMouse, AimBot)
--- ============================================================
-local FlyBV = nil
-local FlyBG = nil
-local FlyConnection = nil
+-- REMOTES (MM2/MMV)
+local PlayerData = {}
+local GameplayRemotes = nil
+local GetCurrentPlayerData = nil
+local PlayerDataChanged = nil
+
+if IS_MM_GAME then
+    local ok, remotes = pcall(function() return ReplicatedStorage:WaitForChild("Remotes", 10) end)
+    if ok and remotes then
+        local ok2, gameplay = pcall(function() return remotes:WaitForChild("Gameplay", 10) end)
+        if ok2 and gameplay then
+            GameplayRemotes = gameplay
+            GetCurrentPlayerData = gameplay:WaitForChild("GetCurrentPlayerData", 10)
+            PlayerDataChanged = gameplay:WaitForChild("PlayerDataChanged", 10)
+        end
+    end
+end
+
+local function GetRoleFromInfo(info)
+    if not info then return nil end
+    local role = tostring(info.Role or ""):lower()
+    if role:find("murder") or role:find("killer") then return "Murderer" end
+    if role:find("sheriff") or role:find("police") then return "Sheriff" end
+    if role:find("hero") then return "Hero" end
+    if role:find("innocent") or role:find("civilian") then return "Innocent" end
+    return nil
+end
+
+local function UpdatePlayerData(newData)
+    if type(newData) ~= "table" then return end
+    PlayerData = newData
+end
+
+local function FetchPlayerData()
+    if not GetCurrentPlayerData then return end
+    task.spawn(function()
+        local ok, data = pcall(function() return GetCurrentPlayerData:InvokeServer() end)
+        if ok and type(data) == "table" then UpdatePlayerData(data) end
+    end)
+end
+
+if IS_MM_GAME and GetCurrentPlayerData then FetchPlayerData() end
+
+if IS_MM_GAME and PlayerDataChanged then
+    PlayerDataChanged.OnClientEvent:Connect(function(newData)
+        if type(newData) == "table" then UpdatePlayerData(newData) else FetchPlayerData() end
+    end)
+end
+
+if IS_MM_GAME and GameplayRemotes then
+    for _, remoteName in ipairs({"RoleSelect", "ShowRoleSelect", "ShowRoleSelectNew", "RoundStart"}) do
+        local remote = GameplayRemotes:FindFirstChild(remoteName)
+        if remote then
+            remote.OnClientEvent:Connect(function()
+                task.wait(0.05)
+                FetchPlayerData()
+            end)
+        end
+    end
+    local RoundEndFade = GameplayRemotes:FindFirstChild("RoundEndFade")
+    if RoundEndFade then
+        RoundEndFade.OnClientEvent:Connect(function() PlayerData = {} end)
+    end
+end
+
+local function GetPlayerRole(player)
+    if not player then return "Lobby" end
+    if not IS_MM_GAME then return "Innocent" end
+    local info = PlayerData[player.Name]
+    if not info or type(info) ~= "table" then return "Lobby" end
+    if info.Dead == true then return "Lobby" end
+    local role = info.Role
+    if not role or role == "" then return "Lobby" end
+    local detected = GetRoleFromInfo(info)
+    return detected or "Innocent"
+end
+
+local function GetRoleColor(role)
+    if not IS_MM_GAME then return Color3.fromRGB(160, 90, 255) end
+    if role == "Murderer" then return Color3.fromRGB(230, 40, 40) end
+    if role == "Sheriff" then return Color3.fromRGB(40, 120, 255) end
+    if role == "Hero" then return Color3.fromRGB(255, 215, 0) end
+    if role == "Innocent" then return Color3.fromRGB(0, 220, 40) end
+    return Color3.fromRGB(200, 200, 210)
+end
+
+-- ESP + NameTags
+local ESPHighlights = {}
+local NameTagGuis = {}
+
+local function CreateESP(player)
+    if ESPHighlights[player] then ESPHighlights[player]:Destroy() ESPHighlights[player] = nil end
+    local role = GetPlayerRole(player)
+    if IS_MM_GAME and role == "Lobby" then return end
+    local character = player.Character
+    if not character then return end
+    local h = Instance.new("Highlight")
+    h.Name = "ESP_Highlight"
+    h.FillColor = GetRoleColor(role)
+    h.FillTransparency = 0.7
+    h.OutlineColor = GetRoleColor(role)
+    h.OutlineTransparency = 0
+    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    h.Adornee = character
+    h.Parent = character
+    ESPHighlights[player] = h
+end
+
+local function ClearAllESP()
+    for _, h in pairs(ESPHighlights) do
+        if h then h:Destroy() end
+    end
+    ESPHighlights = {}
+end
+
+local function CreateNameTag(player)
+    if NameTagGuis[player] then NameTagGuis[player]:Destroy() end
+    local character = player.Character
+    if not character then return end
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    local b = Instance.new("BillboardGui")
+    b.Name = "NameTag_GUI"
+    b.Size = UDim2.new(0, 200, 0, 40)
+    b.StudsOffset = Vector3.new(0, 3, 0)
+    b.AlwaysOnTop = true
+    b.MaxDistance = 300
+    b.Adornee = root
+    b.Parent = root
+
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 0, 18)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = player.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLabel.TextStrokeTransparency = 0
+    nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextSize = 14
+    nameLabel.Parent = b
+
+    local role = GetPlayerRole(player)
+    local roleLabel = Instance.new("TextLabel")
+    roleLabel.Name = "RoleLabel"
+    roleLabel.Size = UDim2.new(1, 0, 0, 14)
+    roleLabel.Position = UDim2.new(0, 0, 0, 17)
+    roleLabel.BackgroundTransparency = 1
+    roleLabel.Text = role
+    roleLabel.TextColor3 = GetRoleColor(role)
+    roleLabel.TextStrokeTransparency = 0
+    roleLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    roleLabel.Font = Enum.Font.GothamSemibold
+    roleLabel.TextSize = 12
+    roleLabel.Parent = b
+
+    NameTagGuis[player] = b
+end
+
+local function ClearAllNameTags()
+    for _, g in pairs(NameTagGuis) do
+        if g then g:Destroy() end
+    end
+    NameTagGuis = {}
+end
+
+local function UpdateAllVisuals()
+    ClearAllESP()
+    ClearAllNameTags()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if Settings.PlayerESP then CreateESP(player) end
+            if Settings.NameTags then CreateNameTag(player) end
+        end
+    end
+end
+
+RunService.Heartbeat:Connect(function()
+    if not Settings.PlayerESP and not Settings.NameTags then return end
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            if Settings.PlayerESP then
+                local role = GetPlayerRole(player)
+                local existing = ESPHighlights[player]
+                if (IS_MM_GAME and role == "Lobby") then
+                    if existing then existing:Destroy() ESPHighlights[player] = nil end
+                else
+                    local color = GetRoleColor(role)
+                    if existing then
+                        if existing.FillColor ~= color then
+                            existing.FillColor = color
+                            existing.OutlineColor = color
+                        end
+                    else
+                        CreateESP(player)
+                    end
+                end
+            end
+            if Settings.NameTags then
+                local gui = NameTagGuis[player]
+                if gui then
+                    local roleLabel = gui:FindFirstChild("RoleLabel")
+                    if roleLabel then
+                        local role = GetPlayerRole(player)
+                        roleLabel.Text = role
+                        roleLabel.TextColor3 = GetRoleColor(role)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local function OnCharacterAdded(player, character)
+    task.wait(0.1)
+    if player ~= LocalPlayer then
+        if Settings.PlayerESP then CreateESP(player) end
+        if Settings.NameTags then CreateNameTag(player) end
+    end
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+    player.CharacterAdded:Connect(function(c) OnCharacterAdded(player, c) end)
+end
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(c) OnCharacterAdded(player, c) end)
+end)
+
+-- Fly, NoClip, LockMouse
+local FlyBV, FlyBG, FlyConnection = nil, nil, nil
 
 local function ToggleFly(enabled)
     Settings.Fly = enabled
@@ -383,8 +735,7 @@ local function ToggleFly(enabled)
         FlyBG.CFrame = root.CFrame
         FlyBG.Parent = root
         FlyConnection = RunService.RenderStepped:Connect(function()
-            if not Settings.Fly then return end
-            if not root or not root.Parent or not FlyBV or not FlyBG then return end
+            if not Settings.Fly or not root or not root.Parent or not FlyBV or not FlyBG then return end
             local v = Vector3.zero
             if UserInputService:IsKeyDown(Enum.KeyCode.Space) then v += Vector3.new(0, 50, 0) end
             if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then v += Vector3.new(0, -50, 0) end
@@ -413,7 +764,6 @@ local function ToggleFly(enabled)
 end
 
 local NoClipConnection = nil
-
 local function ToggleNoClip(enabled)
     Settings.NoClip = enabled
     if enabled then
@@ -422,22 +772,15 @@ local function ToggleNoClip(enabled)
             local char = LocalPlayer.Character
             if not char then return end
             for _, part in pairs(char:GetDescendants()) do
-                if part:IsA("BasePart") and part.CanCollide then
-                    part.CanCollide = false
-                end
+                if part:IsA("BasePart") and part.CanCollide then part.CanCollide = false end
             end
         end)
     else
-        if NoClipConnection then
-            NoClipConnection:Disconnect()
-            NoClipConnection = nil
-        end
+        if NoClipConnection then NoClipConnection:Disconnect() NoClipConnection = nil end
         local char = LocalPlayer.Character
         if char then
             for _, part in pairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
+                if part:IsA("BasePart") then part.CanCollide = true end
             end
         end
     end
@@ -448,6 +791,7 @@ local function ToggleLockMouse(enabled)
     UserInputService.MouseBehavior = enabled and Enum.MouseBehavior.LockCenter or Enum.MouseBehavior.Default
 end
 
+-- AimBot
 local AimBotConnection
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Thickness = 2
@@ -470,16 +814,23 @@ local function ToggleAimBot(enabled)
                     local h = player.Character:FindFirstChildOfClass("Humanoid")
                     local rp = player.Character:FindFirstChild("HumanoidRootPart")
                     if h and rp and h.Health > 0 then
-                        local sp, onScreen = Camera:WorldToScreenPoint(rp.Position)
-                        if onScreen then
-                            local d = (Vector2.new(sp.X, sp.Y) - Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)).Magnitude
-                            if d < closest then closest = d target = rp end
+                        local skip = false
+                        if IS_MM_GAME and Settings.AimBotOnlyMurderer then
+                            if GetPlayerRole(player) ~= "Murderer" then skip = true end
+                        end
+                        if not skip then
+                            local sp, onScreen = Camera:WorldToScreenPoint(rp.Position)
+                            if onScreen then
+                                local d = (Vector2.new(sp.X, sp.Y) - Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)).Magnitude
+                                if d < closest then closest = d target = rp end
+                            end
                         end
                     end
                 end
             end
             if target then
-                Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position, target.Position)
+                local pred = target.Velocity * (Settings.AimBotPrediction / 100)
+                Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position, target.Position + pred)
             end
         end)
     else
@@ -586,16 +937,6 @@ local function CreateCard(category, name, defaultState, callback, accessLevel)
         ApplyLockOverlay(card)
         Switch.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         Knob.BackgroundColor3 = Color3.fromRGB(120, 120, 120)
-        Switch.MouseButton1Click:Connect(function()
-            local originalPos = card.Position
-            for i = 1, 3 do
-                card.Position = originalPos + UDim2.new(0, 5, 0, 0)
-                task.wait(0.03)
-                card.Position = originalPos - UDim2.new(0, 5, 0, 0)
-                task.wait(0.03)
-            end
-            card.Position = originalPos
-        end)
     else
         Switch.MouseButton1Click:Connect(function()
             state = not state
@@ -741,18 +1082,16 @@ local function CreateBindCard(category, name, callback, accessLevel)
     return card
 end
 
--- ============================================================
--- СОЗДАНИЕ КАРТОЧЕК
--- ============================================================
+-- Создание карточек
 if IS_MM_GAME then
-    CreateCard("Main", "AutoGunLooter", false, function(s) Settings.AutoGunLooter = s end, "premium")
-    CreateCard("Main", "KillAll", false, function(s) Settings.KillAll = s end, "premium")
-    CreateCard("ChooseMap", "100 Choose Map", false, function(s) Settings.ChooseMap100 = s end, "admin")
+    CreateCard("Main", "AutoGunLooter", false, function() end, "premium")
+    CreateCard("Main", "KillAll", false, function() end, "premium")
+    CreateCard("ChooseMap", "100 Choose Map", false, function() end, "admin")
 end
 
 CreateCard("Legit", "AimBot", false, ToggleAimBot)
 if IS_MM_GAME then
-    CreateCard("Legit", "AimBot Only Murderer", false, function(s) Settings.AimBotOnlyMurderer = s end, "premium")
+    CreateCard("Legit", "AimBot Only Murderer", false, function(s) Settings.AimBotOnlyMurderer = s end)
 end
 CreateCard("Legit", "AimBot Wall Check", true, function(s) Settings.AimBotWallCheck = s end)
 CreateSliderCard("Legit", "AimBot FOV", 50, 300, 100, function(v) Settings.AimBotFOV = v FOVCircle.Radius = v end)
@@ -761,18 +1100,36 @@ CreateCard("Legit", "Lock Mouse", false, ToggleLockMouse)
 CreateCard("Rage", "Fly", false, ToggleFly)
 CreateCard("Rage", "NoClip", false, ToggleNoClip)
 
+CreateCard("Visuals", "Player ESP", false, function(s)
+    Settings.PlayerESP = s
+    if s then UpdateAllVisuals() else ClearAllESP() end
+end)
+CreateCard("Visuals", "NameTags", false, function(s)
+    Settings.NameTags = s
+    if s then UpdateAllVisuals() else ClearAllNameTags() end
+end)
 CreateCard("Visuals", "Ambience", false, function(s) Settings.Ambience = s end)
+CreateSliderCard("Visuals", "Ambience Type (1-5)", 1, 5, 1, function(v)
+    local types = {"Day", "Night", "Evening", "Sunset", "Anime"}
+    Settings.AmbienceType = types[math.clamp(math.floor(v), 1, 5)]
+end)
 CreateCard("Visuals", "Shaders", false, function(s) Settings.Shaders = s end)
+CreateSliderCard("Visuals", "Shader Mode (1=Blur 2=Ultra)", 1, 2, 1, function(v)
+    Settings.ShaderMode = math.clamp(math.floor(v), 1, 2)
+end)
 CreateCard("Visuals", "Aura", false, function(s) Settings.Aura = s end)
+CreateSliderCard("Visuals", "Aura Type (1=Fire 2=Ice 3=Bolt)", 1, 3, 1, function(v)
+    Settings.AuraType = math.clamp(math.floor(v), 1, 3)
+end)
 CreateCard("Visuals", "Particles", false, function(s) Settings.Particles = s end)
 
 if IS_MM_GAME then
-    CreateCard("Visuals", "SeeInvisibles", false, function(s) Settings.SeeInvisibles = s end, "admin")
+    CreateCard("Visuals", "SeeInvisibles", false, function() end, "admin")
 end
 
 if IS_MM_GAME then
-    CreateCard("WebHook", "MurderNotification", false, function(s) Settings.MurderNotification = s end, "premium")
-    CreateCard("WebHook", "SheriffNotification", false, function(s) Settings.SheriffNotification = s end, "premium")
+    CreateCard("WebHook", "MurderNotification", false, function() end, "premium")
+    CreateCard("WebHook", "SheriffNotification", false, function() end, "premium")
 end
 
 CreateBindCard("Binds", "Fly Key", function(key) Settings.FlyKey = key end)
@@ -780,10 +1137,8 @@ CreateBindCard("Binds", "NoClip Key", function(key) Settings.NoClipKey = key end
 CreateBindCard("Binds", "AimBot Key", function(key) Settings.AimBotKey = key end)
 CreateBindCard("Binds", "Lock Mouse Key", function(key) Settings.LockMouseKey = key end)
 
--- ============================================================
--- КАТЕГОРИИ
--- ============================================================
-local CurrentCategory = "Legit"
+-- Категории
+local CurrentCategory = "Main"
 local CategoryButtons = {}
 
 local function SetCategoryVisibility(cat, searchQuery)
@@ -849,6 +1204,7 @@ UserInputService.InputBegan:Connect(function(input, gp)
     if gp then return end
     if Settings.FlyKey and input.KeyCode == Settings.FlyKey then ToggleFly(not Settings.Fly) end
     if Settings.NoClipKey and input.KeyCode == Settings.NoClipKey then ToggleNoClip(not Settings.NoClip) end
+    if Settings.AimBotKey and input.KeyCode == Settings.AimBotKey then ToggleAimBot(not Settings.AimBot) end
     if Settings.LockMouseKey and input.KeyCode == Settings.LockMouseKey then ToggleLockMouse(not Settings.LockMouse) end
 end)
 
@@ -857,8 +1213,7 @@ BlurEffect.Name = "MegolaHub_Blur"
 BlurEffect.Size = 0
 BlurEffect.Parent = Lighting
 
-local isOpen = false
-local isAnimating = false
+local isOpen, isAnimating = false, false
 
 local function OpenGUI()
     if isAnimating or isOpen then return end
@@ -902,9 +1257,7 @@ end
 
 ExitButton.MouseButton1Click:Connect(CloseGUI)
 
--- ============================================================
--- OPEN MODE BUTTON (с рангом)
--- ============================================================
+-- OpenMode Button (серый User)
 local OpenModeButton = Instance.new("TextButton")
 OpenModeButton.Name = "MegolaHub_ToggleButton"
 OpenModeButton.Size = UDim2.new(0, 130, 0, 40)
